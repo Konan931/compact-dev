@@ -1,4 +1,4 @@
-# compact-dev — a compact developer toolbox
+# compact-dev — a compact developer toolbox and codekit
 
 > I, Konan, acknowledge the UNIX philosophy: small tools, composability, and clarity.
 > This repository **intentionally contains experimental, pragmatic and portable utilities** —
@@ -15,16 +15,18 @@ See profile: https://raw.githubusercontent.com/Konan931/compact-dev/main/profile
 ![last update](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/<user>/<repo>/main/badge.json)
 
 **Structure (intentional):**
-- `bin/` — executable helpers (small, tested binaries)
-- `src/` — source code (C, Go, Python)
-- `experimental/` — experiments and prototypes (label: EXPERIMENTAL)
-- `owned/` — curated, maintained tools (label: OWNED)
-- `archived/` — older experiments kept for reference (label: ARCHIVED)
-- `art/`- thrash - but too elegantly labeled to not get away with it
+- `bin/` — executable helpers (small, tested __binaries__ and __system sustainment data__)
+- `src/` — source code (__C__, __Go__, __Python__)
+- `experimental/` — experiments and prototypes (label: __EXPERIMENTAL__)
+- `owned/` — curated, maintained tools (label: __OWNED__)
+- `archived/` — older experiments kept for reference (label: __ARCHIVED__)
+- `art/` — thrash -> but too elegantly labeled, to not get away with it (label: __ART__)
 
 **Labels:**
 - `EXPERIMENTAL` — prototype, may break
 - `OWNED` — actively maintained, reviewed
 - `ARCHIVED` — preserved but not maintained
-- `NOMISCATALL`- no misc at all [but maybe the new KONEX2 boot/dev]
-- `KLANG`- guess it, or: system design workspace
+- `NOMISCATALL` — no misc at all [but maybe the new KONEX2 boot/dev]
+- `ÀRT`— [to be] announced real time [of variable definition]
+- `KLANG`— guess it, or: system design workspace
+- `SUSSYS`— KLang-Label for a suspect system __[EXPLICIT]__
