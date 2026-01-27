@@ -1,1 +1,1 @@
-# bin-compact_dev
+# bin/compact_dev
