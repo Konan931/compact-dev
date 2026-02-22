@@ -2,16 +2,20 @@
 ```md
 compact-dev/
 ├── bin/
-│   ├── compact              # bash dispatcher -> calls python/go tools
-│   └── compact-init         # minimal bootstrap
-├── src/
-│   ├── python/
-│   │   └── compact/         # python package (no heavy deps)
-│   ├── go/
-│   └── c/
+│   ├── compact
+│   └── compact-init
 ├── docs/
 │   └── governance.md
+├── src/
+│   ├── python/
+│   │   └── compact/
+│   │       ├── __init__.py
+│   │       ├── audit.py
+│   │       └── badge.py
+│   ├── go/
+│   └── c/
 ├── profile.json
 ├── badge.json
+├── requirements.txt
 └── README.md
 ```
