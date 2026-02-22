@@ -30,3 +30,6 @@ See profile: https://raw.githubusercontent.com/Konan931/compact-dev/main/profile
 - `ÀRT`— [to be] announced real time [of variable definition]
 - `KLANG`— guess it, or: system design workspace
 - `SUSSYS`— KLang-Label for a suspect system __[EXPLICIT]__
+
+> compact-dev is maintained and curated by:  
+  **Digital Welfare™ Productions** — System Architecture & Applied Tooling Division 2026 ~&copy;~
