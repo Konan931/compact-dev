@@ -1,39 +1,49 @@
 # compact-dev — a compact developer toolbox and codekit
 
 > I, Konan, acknowledge the UNIX philosophy: small tools, composability, and clarity.
-> This repository **intentionally contains experimental, pragmatic and portable utilities** —
-> deliberately compact, _occasionally elegant_, bound to the bayesian bits, decently a little messy, **but never script/misc.y**.
 
-<!-- TIMESTAMP:START -->
-I, **Konan/3V1Lk0N4n[is case of abscence]**, affirm that **this repo is actively maintained**.
+Maintained and curated within the ecosystem of **Digital Welfare™ Productions**.
 
-Last update: 🏪 2026-01-27T12:04:38Z 📔 <!-- ⬅️ :notebook_with_decorative_color_for_your_personal_enjoyment: -->
+![last update](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Konan931/compact-dev/main/badge.json)
 
-See profile: https://raw.githubusercontent.com/Konan931/compact-dev/main/profile.json
-<!-- TIMESTAMP:END -->
+<a id="toc"></a>
+## Table of contents
+- [Profile](#profile)
+- [Structure](#structure)
+- [Labels](#labels)
+- [Quick start](#quick-start)
+- [Governance](#governance)
 
-![last update](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/<user>/<repo>/main/badge.json)
+<a id="profile"></a>
+## Profile
+- [profile.json](./profile.json)
+- Raw: https://raw.githubusercontent.com/Konan931/compact-dev/main/profile.json
 
-**Structure:**
-- `bin/` — executable helpers (small, tested __binaries__ and __system sustainment data__)
-  `bin/` contains small, composable, executable tools.
-   No experiments.
-   No drafts.
-   Only functional artifacts.-
--  `src/` — source code (__C__, __Go__, __Python__)
-- `experimental/` — experiments and prototypes (label: __EXPERIMENTAL__)
-- `owned/` — curated, maintained tools (label: __OWNED__)
-- `archived/` — older experiments kept for reference (label: __ARCHIVED__)
-- `art/` — thrash -> but too elegantly labeled, to not get away with it (label: __ART__)
+<a id="structure"></a>
+## Structure
+See: [structure.md](./structure.md)
 
-**Labels:**
+<a id="labels"></a>
+## Labels
 - `EXPERIMENTAL` — prototype, may break
 - `OWNED` — actively maintained, reviewed
 - `ARCHIVED` — preserved but not maintained
-- `NOMISCATALL` — no misc at all [but maybe the new KONEX2 boot/dev]
-- `ÀRT`— [to be] announced real time [of variable definition]
-- `KLANG`— guess it, or: system design workspace
-- `SUSSYS`— KLang-Label for a suspect system __[EXPLICIT]__
+- `NOMISCATALL` — no misc at all
+- `KLANG` — system design workspace
+- `SUSSYS` — suspect system (explicit)
+- `ART` — thrash, but intentionally labeled
 
-> compact-dev is maintained and curated by:  
-  **Digital Welfare™ Productions** — System Architecture & Applied Tooling Division 2026 ~&copy;~
+<a id="quick-start"></a>
+## Quick start
+```bash
+./bin/compact init
+./bin/compact audit
+./bin/compact badge
+```
+
+<a id="governance"></a>
+
+Governance
+
+See: docs/governance.md
+

@@ -1,0 +1,365 @@
+#!/usr/bin/env bash
+# compact-init - bootstrap compact-dev repository
+# English-only comments as requested.
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VENV_DIR="${ROOT_DIR}/.venv"
+
+say() { printf '%s\n' "$*"; }
+
+ensure_dirs() {
+  mkdir -p "${ROOT_DIR}/bin" \
+           "${ROOT_DIR}/docs" \
+           "${ROOT_DIR}/src/python/compact" \
+           "${ROOT_DIR}/src/go" \
+           "${ROOT_DIR}/src/c"
+}
+
+write_gitignore() {
+  if [[ ! -f "${ROOT_DIR}/.gitignore" ]]; then
+    cat > "${ROOT_DIR}/.gitignore" <<'EOF'
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+EOF
+    say "Created .gitignore"
+  else
+    # ensure .venv is ignored
+    if ! grep -qE '^\Q.venv/\E$' "${ROOT_DIR}/.gitignore"; then
+      printf '\n.venv/\n' >> "${ROOT_DIR}/.gitignore"
+      say "Updated .gitignore (added .venv/)"
+    fi
+  fi
+}
+
+write_requirements() {
+  if [[ ! -f "${ROOT_DIR}/requirements.txt" ]]; then
+    cat > "${ROOT_DIR}/requirements.txt" <<'EOF'
+# Keep this minimal. Add dependencies only when justified.
+EOF
+    say "Created requirements.txt"
+  fi
+}
+
+create_venv() {
+  if [[ ! -d "${VENV_DIR}" ]]; then
+    python3 -m venv "${VENV_DIR}"
+    say "Created venv at .venv"
+  else
+    say "venv already exists at .venv"
+  fi
+
+  "${VENV_DIR}/bin/python" -m pip install --upgrade pip >/dev/null
+  if [[ -f "${ROOT_DIR}/requirements.txt" ]]; then
+    "${VENV_DIR}/bin/pip" install -r "${ROOT_DIR}/requirements.txt" >/dev/null || true
+  fi
+}
+
+write_python_files() {
+  local pkg_dir="${ROOT_DIR}/src/python/compact"
+  local init_py="${pkg_dir}/__init__.py"
+  local audit_py="${pkg_dir}/audit.py"
+  local badge_py="${pkg_dir}/badge.py"
+
+  if [[ ! -f "${init_py}" ]]; then
+    cat > "${init_py}" <<'EOF'
+__all__ = []
+EOF
+    say "Created src/python/compact/__init__.py"
+  fi
+
+  if [[ ! -f "${audit_py}" ]]; then
+    cat > "${audit_py}" <<'EOF'
+#!/usr/bin/env python3
+# Repo audit tool for compact-dev.
+# English-only comments as requested.
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+REQUIRED_DIRS = [
+    "bin",
+    "docs",
+    "src/python/compact",
+    "src/go",
+    "src/c",
+]
+
+REQUIRED_FILES = [
+    "README.md",
+    "profile.json",
+    "badge.json",
+    "docs/governance.md",
+]
+
+def eprint(*args: object) -> None:
+    print(*args, file=sys.stderr)
+
+def check_exists(root: Path) -> list[str]:
+    errors: list[str] = []
+    for d in REQUIRED_DIRS:
+        if not (root / d).exists():
+            errors.append(f"Missing directory: {d}")
+    for f in REQUIRED_FILES:
+        if not (root / f).exists():
+            errors.append(f"Missing file: {f}")
+    return errors
+
+def check_json(root: Path, rel: str) -> list[str]:
+    p = root / rel
+    if not p.exists():
+        return []
+    try:
+        json.loads(p.read_text(encoding="utf-8"))
+        return []
+    except Exception as ex:
+        return [f"Invalid JSON in {rel}: {ex}"]
+
+def main() -> int:
+    root = Path(__file__).resolve().parents[3]
+    errors: list[str] = []
+    errors += check_exists(root)
+    errors += check_json(root, "profile.json")
+    errors += check_json(root, "badge.json")
+
+    try:
+        prof = json.loads((root / "profile.json").read_text(encoding="utf-8"))
+        rawp = (prof.get("links") or {}).get("raw_profile")
+        if isinstance(rawp, str) and "raw.githubusercontent.com" in rawp:
+            if "/compact-dev/" not in rawp:
+                errors.append("profile.json: links.raw_profile does not include '/compact-dev/' (check repo path)")
+    except Exception:
+        pass
+
+    if errors:
+        eprint("AUDIT: FAIL")
+        for err in errors:
+            eprint(f"- {err}")
+        return 1
+
+    print("AUDIT: OK")
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+EOF
+    chmod +x "${audit_py}" || true
+    say "Created src/python/compact/audit.py"
+  fi
+
+  if [[ ! -f "${badge_py}" ]]; then
+    cat > "${badge_py}" <<'EOF'
+#!/usr/bin/env python3
+# badge.json generator for shields.io endpoint.
+# English-only comments as requested.
+
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+def utc_now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+def main() -> int:
+    root = Path(__file__).resolve().parents[3]
+    profile_path = root / "profile.json"
+    badge_path = root / "badge.json"
+
+    last_update = utc_now_iso()
+    name = "compact-dev"
+    try:
+        if profile_path.exists():
+            prof = json.loads(profile_path.read_text(encoding="utf-8"))
+            name = prof.get("project", "compact-dev")
+            if isinstance(prof.get("last_update"), str) and prof["last_update"]:
+                last_update = prof["last_update"]
+    except Exception:
+        pass
+
+    badge = {
+        "schemaVersion": 1,
+        "label": "last update",
+        "message": last_update,
+        "color": "blue",
+    }
+
+    badge_path.write_text(json.dumps(badge, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {badge_path}")
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+EOF
+    chmod +x "${badge_py}" || true
+    say "Created src/python/compact/badge.py"
+  fi
+}
+
+write_docs() {
+  if [[ ! -f "${ROOT_DIR}/docs/governance.md" ]]; then
+    cat > "${ROOT_DIR}/docs/governance.md" <<'EOF'
+# Governance (minimal)
+
+This repository follows the UNIX philosophy: small tools, composability, and clarity.
+
+## Lifecycle
+EXPERIMENTAL → OWNED → ARCHIVED  
+Optional: EXPERIMENTAL → SUSSYS → ARCHIVED
+
+## Labels
+- **EXPERIMENTAL** — prototype, may break
+- **OWNED** — actively maintained, reviewed
+- **ARCHIVED** — preserved but not maintained
+- **NOMISCATALL** — no misc at all
+- **KLANG** — system design workspace
+- **SUSSYS** — suspect system (explicit)
+- **ART** — thrash, but intentionally labeled
+EOF
+    say "Created docs/governance.md"
+  fi
+}
+
+write_profile_and_badge() {
+  if [[ ! -f "${ROOT_DIR}/profile.json" ]]; then
+    cat > "${ROOT_DIR}/profile.json" <<'EOF'
+{
+  "project": "compact-dev",
+  "name": "Konan",
+  "affiliation": "Digital Welfare™ Productions",
+  "bio": "Konan — focused on low-level architecture and CLI development.",
+  "last_update": "2026-01-27T12:00:00Z",
+  "links": {
+    "bootstrap": "https://example.com/bootstrap-account-or-profile",
+    "raw_profile": "https://raw.githubusercontent.com/Konan931/compact-dev/main/profile.json"
+  }
+}
+EOF
+    say "Created profile.json"
+  fi
+
+  if [[ ! -f "${ROOT_DIR}/badge.json" ]]; then
+    cat > "${ROOT_DIR}/badge.json" <<'EOF'
+{
+  "schemaVersion": 1,
+  "label": "last update",
+  "message": "init",
+  "color": "blue"
+}
+EOF
+    say "Created badge.json"
+  fi
+}
+
+write_readme_and_structure() {
+  if [[ ! -f "${ROOT_DIR}/README.md" ]]; then
+    cat > "${ROOT_DIR}/README.md" <<'EOF'
+# compact-dev — a compact developer toolbox and codekit
+
+> I, Konan, acknowledge the UNIX philosophy: small tools, composability, and clarity.
+
+Maintained and curated within the ecosystem of **Digital Welfare™ Productions**.
+
+![last update](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Konan931/compact-dev/main/badge.json)
+
+<a id="toc"></a>
+## Table of contents
+- [Profile](#profile)
+- [Structure](#structure)
+- [Labels](#labels)
+- [Quick start](#quick-start)
+- [Governance](#governance)
+
+<a id="profile"></a>
+## Profile
+- [profile.json](./profile.json)
+- Raw: https://raw.githubusercontent.com/Konan931/compact-dev/main/profile.json
+
+<a id="structure"></a>
+## Structure
+See: [structure.md](./structure.md)
+
+<a id="labels"></a>
+## Labels
+- `EXPERIMENTAL` — prototype, may break
+- `OWNED` — actively maintained, reviewed
+- `ARCHIVED` — preserved but not maintained
+- `NOMISCATALL` — no misc at all
+- `KLANG` — system design workspace
+- `SUSSYS` — suspect system (explicit)
+- `ART` — thrash, but intentionally labeled
+
+<a id="quick-start"></a>
+## Quick start
+```bash
+./bin/compact init
+./bin/compact audit
+./bin/compact badge
+
+<a id="governance"></a>
+
+Governance
+
+See: docs/governance.md
+
+EOF
+say "Created README.md"
+fi
+
+if [[ ! -f "${ROOT_DIR}/structure.md" ]]; then
+cat > "${ROOT_DIR}/structure.md" <<'EOF'
+
+compact-dev/
+├── bin/
+│   ├── compact
+│   └── compact-init
+├── docs/
+│   └── governance.md
+├── src/
+│   ├── python/
+│   │   └── compact/
+│   │       ├── __init__.py
+│   │       ├── audit.py
+│   │       └── badge.py
+│   ├── go/
+│   └── c/
+├── profile.json
+├── badge.json
+├── requirements.txt
+└── README.md
+
+EOF
+say "Created structure.md"
+fi
+}
+
+install_python_path() {
+local sitepk
+sitepk="$("${VENV_DIR}/bin/python" -c "import site; print(site.getsitepackages()[0])")"
+echo "${ROOT_DIR}/src/python" > "${sitepk}/compact_dev.pth"
+say "Configured venv PYTHONPATH via ${sitepk}/compact_dev.pth"
+}
+
+main() {
+ensure_dirs
+write_gitignore
+write_requirements
+create_venv
+write_python_files
+write_docs
+write_profile_and_badge
+write_readme_and_structure
+install_python_path
+
+chmod +x "${ROOT_DIR}/bin/compact" "${ROOT_DIR}/bin/compact-init" 2>/dev/null || true
+
+say "Bootstrap complete."
+say "Next: ./bin/compact audit"
+}
