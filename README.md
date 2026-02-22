@@ -1,1 +1,0 @@
-# bin/compact_dev

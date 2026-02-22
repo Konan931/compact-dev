@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# compact - a minimal dispatcher for compact-dev tools
+
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VENV_DIR="${ROOT_DIR}/.venv"
+PYTHON_BIN="${VENV_DIR}/bin/python"
+
+usage() {
+  cat <<'EOF'
+compact - compact-dev dispatcher
+
+Usage:
+  compact init              Bootstrap repo (venv, structure, minimal files)
+  compact audit             Validate repo structure and key files
+  compact badge             Generate badge.json from repo metadata
+  compact profile           Show profile.json (pretty)
+  compact help              Show this help
+
+Notes:
+  - Uses ./.venv by default (created by 'compact init').
+EOF
+}
+
+ensure_venv() {
+  if [[ ! -x "${PYTHON_BIN}" ]]; then
+    echo "ERROR: venv not found at .venv. Run: bin/compact-init (or: compact init)" >&2
+    exit 1
+  fi
+}
+
+cmd="${1:-help}"
+shift || true
+
+case "${cmd}" in
+  help|-h|--help)
+    usage
+    ;;
+  init)
+    "${ROOT_DIR}/bin/compact-init" "$@"
+    ;;
+  audit)
+    ensure_venv
+    exec "${PYTHON_BIN}" -m compact.audit "$@"
+    ;;
+  badge)
+    ensure_venv
+    exec "${PYTHON_BIN}" -m compact.badge "$@"
+    ;;
+  profile)
+    ensure_venv
+    exec "${PYTHON_BIN}" -c "import json; print(json.dumps(json.load(open('${ROOT_DIR}/profile.json','r',encoding='utf-8')), indent=2, ensure_ascii=False))"
+    ;;
+  *)
+    echo "ERROR: Unknown command: ${cmd}" >&2
+    usage >&2
+    exit 2
+    ;;
+esac
