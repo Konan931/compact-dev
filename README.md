@@ -14,9 +14,13 @@ See profile: https://raw.githubusercontent.com/Konan931/compact-dev/main/profile
 
 ![last update](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/<user>/<repo>/main/badge.json)
 
-**Structure (intentional):**
+**Structure:**
 - `bin/` — executable helpers (small, tested __binaries__ and __system sustainment data__)
-- `src/` — source code (__C__, __Go__, __Python__)
+  `bin/` contains small, composable, executable tools.
+   No experiments.
+   No drafts.
+   Only functional artifacts.-
+-  `src/` — source code (__C__, __Go__, __Python__)
 - `experimental/` — experiments and prototypes (label: __EXPERIMENTAL__)
 - `owned/` — curated, maintained tools (label: __OWNED__)
 - `archived/` — older experiments kept for reference (label: __ARCHIVED__)
