@@ -29,6 +29,9 @@ REQUIRED_FILES = [
     "docs/labels.md",
     "tests/python/test_audit.py",
     "tests/python/test_badge.py",
+    "src/go/README.md",
+    "src/c/README.md",
+    "docs/architecture.md",
 ]
 
 
