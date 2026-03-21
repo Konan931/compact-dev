@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-# Repo audit tool for compact-dev.
-# English-only comments as requested.
+# Repo audit tool for compact-dev
 
 from __future__ import annotations
 
 import json
 import sys
-from pathlib import Path
+
+from compact.paths import repo_root
 
 REQUIRED_DIRS = [
     "bin",
@@ -26,7 +26,7 @@ REQUIRED_FILES = [
 def eprint(*args: object) -> None:
     print(*args, file=sys.stderr)
 
-def check_exists(root: Path) -> list[str]:
+def check_exists(root) -> list[str]:
     errors: list[str] = []
     for d in REQUIRED_DIRS:
         if not (root / d).exists():
@@ -36,7 +36,7 @@ def check_exists(root: Path) -> list[str]:
             errors.append(f"Missing file: {f}")
     return errors
 
-def check_json(root: Path, rel: str) -> list[str]:
+def check_json(root, rel: str) -> list[str]:
     p = root / rel
     if not p.exists():
         return []
@@ -48,10 +48,9 @@ def check_json(root: Path, rel: str) -> list[str]:
 
 def main(args: list[str] | None = None) -> int:
     if args is None:
-        import sys
         args = sys.argv[1:]
 
-    root = Path(__file__).resolve().parents[3]
+    root = repo_root()
     errors: list[str] = []
     errors += check_exists(root)
     errors += check_json(root, "profile.json")
