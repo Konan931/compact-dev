@@ -15,6 +15,7 @@ def test_check_exists_ok(tmp_path: Path) -> None:
     required_files = [
         "README.md",
         "CONTRIBUTING.md",
+        "LICENSE",
         "profile.json",
         "badge.json",
         "structure.md",

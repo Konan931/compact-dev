@@ -22,6 +22,7 @@ REQUIRED_DIRS = [
 REQUIRED_FILES = [
     "README.md",
     "CONTRIBUTING.md",
+    "LICENSE",
     "profile.json",
     "badge.json",
     "structure.md",
