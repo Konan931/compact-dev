@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "compact-dev"
+version = "0.1.0"
+description = "A compact developer toolbox and polyglot codekit."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+  { name = "Konan" }
+]
+keywords = [
+  "cli",
+  "toolbox",
+  "developer-tools",
+  "unix",
+  "audit",
+  "polyglot"
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "License :: Other/Proprietary License",
+  "Operating System :: OS Independent",
+  "Environment :: Console",
+  "Topic :: Software Development :: Build Tools",
+  "Topic :: Utilities"
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/Konan931/compact-dev"
+Repository = "https://github.com/Konan931/compact-dev"
+
+[tool.setuptools]
+package-dir = {"" = "src/python"}
+
+[tool.setuptools.packages.find]
+where = ["src/python"]
+include = ["compact*"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = [
+  "tests/python"
+]
+addopts = "-ra"
