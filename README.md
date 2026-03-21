@@ -125,3 +125,7 @@ See: [docs/governance.md](./docs/governance.md)
 ## Roadmap
 
 See: [docs/roadmap.md](./docs/roadmap.md)
+
+## Contributing
+
+See: [CONTRIBUTING.md](./CONTRIBUTING.md)
