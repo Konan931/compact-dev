@@ -42,8 +42,5 @@ See: [structure.md](./structure.md)
 ```
 
 <a id="governance"></a>
-
-Governance
-
-See: docs/governance.md
-
+## Governance
+See: [docs/governance.md](./docs/governance.md)
