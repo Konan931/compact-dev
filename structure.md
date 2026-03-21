@@ -32,11 +32,9 @@ compact-dev/
 │       └── test_badge.py
 ├── .gitignore
 ├── badge.json
-├── environment.yml
 ├── profile.json
 ├── pyproject.toml
 ├── README.md
-├── requirements.txt
 └── structure.md
 ```
 
@@ -59,10 +57,6 @@ compact-dev/
 * profile.json and badge.json provide repository metadata and badge integration.
 
 * pyproject.toml is the primary Python project definition for packaging, editable installs, and development dependencies.
-
-* requirements.txt is currently still present but is expected to become optional or be removed in favor of pyproject.toml.
-
-* environment.yml is currently present but should be kept only if Conda-based workflows are intentionally supported.
 
 ## Status
 
