@@ -15,7 +15,6 @@ compact-dev/
 ├── docs/
 │   ├── governance.md
 │   └── labels.md
-├── project/
 ├── src/
 │   ├── python/
 │   │   └── compact/
