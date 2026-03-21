@@ -20,11 +20,12 @@ def test_check_exists_ok(tmp_path: Path) -> None:
         "pyproject.toml",
         "docs/governance.md",
         "docs/labels.md",
+        "docs/architecture.md",
+        "docs/roadmap.md",
         "tests/python/test_audit.py",
         "tests/python/test_badge.py",
         "src/go/README.md",
         "src/c/README.md",
-        "docs/architecture.md",
     ]
 
     for rel in required_dirs:

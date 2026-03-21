@@ -16,7 +16,9 @@ Maintained and curated within the ecosystem of **Digital Welfare™ Productions*
 - [Labels](#labels)
 - [Quick start](#quick-start)
 - [Stability](#stability)
+- [Architecture](#architecture)
 - [Governance](#governance)
+- [Roadmap](#roadmap)
 
 <a id="overview"></a>
 ## Overview
@@ -106,8 +108,20 @@ The Python core is currently the most stable and maintained part of the reposito
 
 _**Interfaces and structure may still evolve** while the project is being refined, especially in areas related to **packaging**, **language expansion**, and **repository governance**._
 
+<a id="architecture"></a>
+
+## Architecture
+
+See: [docs/architecture.md](./docs/architecture.md)
+
 <a id="governance"></a>
 
 ## Governance
 
 See: [docs/governance.md](./docs/governance.md)
+
+<a id="roadmap"></a>
+
+## Roadmap
+
+See: [docs/roadmap.md](./docs/roadmap.md)

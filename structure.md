@@ -15,9 +15,11 @@ compact-dev/
 │   └── compact.bootstrap.bak
 │
 ├── docs/
-│   ├── architecture.md
-│   ├── governance.md
-│   └── labels.md
+│    ├── architecture.md
+│    ├── governance.md
+│    ├── labels.md
+│    └── roadmap.md
+│
 ├──src/
 │    ├── python/
 │    │   └── compact/
@@ -64,6 +66,10 @@ compact-dev/
 * profile.json and badge.json provide repository metadata and badge integration.
 
 * pyproject.toml is the primary Python project definition for packaging, editable installs, and development dependencies.
+
+* `docs/architecture.md` defines the structural model of the repository.
+
+* `docs/roadmap.md` describes the intended direction of the project.
 
 ## Status
 
