@@ -1,3 +1,5 @@
+## structure.md
+```md
 compact-dev/
 ├── .github/
 │   └── workflows/
@@ -35,3 +37,4 @@ compact-dev/
 ├── badge.json
 ├── structure.md
 └── README.md
+```
