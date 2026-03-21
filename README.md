@@ -41,6 +41,14 @@ See: [structure.md](./structure.md)
 ./bin/compact badge
 ```
 
+```bash
+PYTHONPATH=src/python python -m compact audit
+PYTHONPATH=src/python python -m compact badge
+```
+## Stability
+The Python core is the current reference implementation.
+Interfaces may still evolve while the repository structure and governance are being refined.
+
 <a id="governance"></a>
 ## Governance
 See: [docs/governance.md](./docs/governance.md)
