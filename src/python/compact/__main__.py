@@ -1,10 +1,14 @@
-import sys
 import subprocess
-from pathlib import Path
+import sys
+
+from compact.paths import repo_root
 
 
-def main(argv: list[str]) -> int:
-    if len(argv) < 2 or argv[1] in {"-h", "--help"}:
+def main(argv: list[str] | None = None) -> int:
+    if argv is None:
+        argv = sys.argv[1:]
+
+    if not argv or argv[0] in {"-h", "--help"}:
         print(
             "Usage: compact <command> [args...]\n\n"
             "Commands:\n"
@@ -12,13 +16,12 @@ def main(argv: list[str]) -> int:
             "  audit\n"
             "  badge"
         )
-        return 0 if len(argv) >= 2 else 2
+        return 0 if argv else 2
 
-    cmd, *rest = argv[1:]
+    cmd, *rest = argv
 
     if cmd == "init":
-        root = Path(__file__).resolve().parents[3]
-        script = root / "bin" / "compact-init"
+        script = repo_root() / "bin" / "compact-init"
         return subprocess.call([str(script), *rest])
 
     if cmd == "audit":
@@ -34,4 +37,4 @@ def main(argv: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main(sys.argv))
+    raise SystemExit(main())
