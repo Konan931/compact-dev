@@ -6,7 +6,7 @@
 compact-dev/
 ├── .github/
 │   └── workflows/
-│       └── python-package-conda.yml
+│       └── ci.yml
 ├── bin/
 │   ├── compact
 │   ├── compact-init

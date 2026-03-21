@@ -16,13 +16,19 @@ REQUIRED_DIRS = [
     "src/python/compact",
     "src/go",
     "src/c",
+    "tests/python/",
 ]
 
 REQUIRED_FILES = [
     "README.md",
     "profile.json",
     "badge.json",
+    "structure.md",
+    "pyproject.toml",
     "docs/governance.md",
+    "docs/labels.md",
+    "tests/python/test_audit.py",
+    "tests/python/test_badge.py",
 ]
 
 

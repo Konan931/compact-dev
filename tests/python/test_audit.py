@@ -10,12 +10,18 @@ def test_check_exists_ok(tmp_path: Path) -> None:
         "src/python/compact",
         "src/go",
         "src/c",
+        "tests/python",
     ]
     required_files = [
         "README.md",
         "profile.json",
         "badge.json",
+        "structure.md",
+        "pyproject.toml",
         "docs/governance.md",
+        "docs/labels.md",
+        "tests/python/test_audit.py",
+        "tests/python/test_badge.py",
     ]
 
     for rel in required_dirs:
