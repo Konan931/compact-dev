@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-# badge.json generator for shields.io endpoint.
-# English-only comments as requested.
+# badge.json generator for shields.io endpoint
 
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime, timezone
-from pathlib import Path
+
+from compact.paths import repo_root
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 def main(args: list[str] | None = None) -> int:
     if args is None:
-        import sys
         args = sys.argv[1:]
 
-    root = Path(__file__).resolve().parents[3]
+    root = repo_root()
     profile_path = root / "profile.json"
     badge_path = root / "badge.json"
 
