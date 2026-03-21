@@ -9,6 +9,7 @@ compact-dev/
 ├── src/
 │   ├── python/
 │   │   └── compact/
+│   │       ├── __main__.py
 │   │       ├── __init__.py
 │   │       ├── audit.py
 │   │       └── badge.py
