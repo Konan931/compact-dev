@@ -1,197 +1,76 @@
 # Architecture
 
-## Overview
+## 0.2 model
 
-`compact-dev` is a compact developer toolbox and polyglot codekit built around a small-core philosophy.
+`compact-dev` separates four concerns:
 
-The repository is designed to favor:
+1. **CLI** — user-facing commands and explicit target selection.
+2. **Preset engine** — declarative manifests plus inline templates.
+3. **Repository contract** — `compact.toml` records project identity, active presets, and optional extra audit requirements.
+4. **Verification** — audit, doctor, status, and CI validate generated state without silently mutating external services.
 
-- composable tools
-- explicit structure
-- auditable repository state
-- small interfaces
-- incremental language expansion
+## Data flow
 
-The project currently uses Python as its primary reference implementation while reserving space for future Go and C components where they are operationally justified.
+```text
+preset manifests + templates
+          │
+          v
+    compact init TARGET
+          │
+          v
+      compact.toml
+          │
+     ┌────┴─────┐
+     v          v
+ compact audit  compact doctor
+```
 
-## Core idea
+## Target resolution
 
-The central architectural idea of `compact-dev` is:
+Target semantics are intentionally asymmetric:
 
-- keep the active core small
-- avoid monolithic tooling
-- separate repository discipline from language expansion
-- let each implementation layer justify its existence
+- `compact init [target]` generates into the explicit target, defaulting to the current directory.
+- `audit`, `doctor`, `status`, and `badge` use an explicit target exactly as provided.
+- when those inspection commands omit the target, the CLI searches upward from the current directory for the nearest `compact.toml`.
 
-This repository is not intended to become a miscellaneous dumping ground for unrelated experiments.
+This prevents a typo or uninitialized child directory from silently redirecting an explicit command to a parent project while preserving convenient operation from project subdirectories.
 
-It is meant to remain compact, interpretable, and maintainable.
+## Preset composition and re-initialization
 
-## Repository layers
+Presets declare dependencies. `python-cli`, `web-static`, and `vercel` currently depend on `base`. Dependency resolution is deterministic and de-duplicated, so future overlays can be added without copying the entire base template.
 
-The project is currently organized into the following layers:
+When `compact init` encounters a valid existing `compact.toml`, omitted `--name` and `--preset` values inherit that contract. Explicit flags still override it. This makes ordinary re-initialization idempotent and prevents `--force` without other flags from accidentally collapsing a composed project back to `base`.
 
-### 1. Repository control layer
+## Template boundaries
 
-This layer defines and preserves repository discipline.
+The renderer remains intentionally small but performs format-aware value preparation and path validation:
 
-Examples include:
+- TOML strings are encoded rather than interpolated raw.
+- Python package identifiers are normalized and protected against reserved keywords.
+- HTML-facing project names are escaped before insertion into attributes or text nodes.
+- generated paths must be relative POSIX-style paths and may not traverse parents, use Windows drives, or contain backslashes.
 
-- `compact audit`
-- metadata files such as `profile.json`
-- badge generation via `badge.json`
-- documentation such as governance, labels, and structure notes
+These checks apply to preset output rather than the preset manifests themselves, so template tokens remain inspectable source data.
 
-This layer ensures that the repository can inspect and describe itself.
+## Safety properties
 
-### 2. Reference implementation layer
+Initialization plans all managed files before writing. If any destination conflicts and `--force` is absent, no generated file is written. `--dry-run` uses the same plan but never writes.
 
-This layer contains the currently maintained implementation core.
+Deployment presets provide configuration and guidance only. Vercel linking, environment synchronization, previews, and production promotion remain explicit external actions.
 
-At present, this is the Python package in:
+## Source repository vs generated repository
 
-- `src/python/compact/`
+The package source is not itself the canonical generated layout. The source uses `compact.toml` with `base` plus extra audit requirements; generated `python-cli` projects use the standard `src/<package>/` layout. This avoids the old self-bootstrap coupling.
 
-Its role is to:
+## Extension contract
 
-- provide the canonical CLI behavior
-- serve as the first implementation path
-- remain easy to test, inspect, and evolve
+A new preset needs only:
 
-### 3. Language expansion layer
+- `resources/presets/<name>.toml`
+- inline, inspectable file templates in that preset manifest
+- tests proving generation and strict audit
+- installation or execution smoke coverage when the preset produces runnable code
 
-This layer contains future language-specific implementations or utilities.
+Provider presets must keep authentication, environment synchronization, provisioning, migration, and deployment as explicit external actions.
 
-Currently reserved areas:
-
-- `src/go/`
-- `src/c/`
-
-These directories exist to support carefully scoped additions, not speculative bulk expansion.
-
-## Language roles
-
-### Python
-
-Python is currently the primary and maintained implementation language.
-
-It is used because it supports:
-
-- fast iteration
-- readable CLI tooling
-- simple testing
-- straightforward packaging
-- broad maintainability
-
-Python is the current source of truth for implemented repository behavior.
-
-### Go
-
-Go is reserved for future tools that benefit from:
-
-- static binaries
-- fast startup
-- low-friction deployment
-- explicit CLI ergonomics
-
-Go should be introduced when operational simplicity or binary distribution offers a real advantage.
-
-### C
-
-C is reserved for future tools that benefit from:
-
-- low-level control
-- minimal runtime overhead
-- direct systems interaction
-- explicit implementation boundaries
-
-C should be introduced deliberately and only where it provides architectural or operational value.
-
-## CLI design
-
-The command-line interface should remain small, legible, and task-oriented.
-
-The current command surface is intentionally compact:
-
-- `compact init`
-- `compact audit`
-- `compact badge`
-
-New commands should only be added when they are:
-
-- clearly scoped
-- structurally justified
-- consistent with the repository philosophy
-
-The CLI should prefer a toolbox model over a framework model.
-
-## Auditability
-
-Auditability is a first-class architectural concern.
-
-The repository should be able to validate:
-
-- required structure
-- required metadata
-- JSON integrity where applicable
-- presence of core documentation
-- presence of expected implementation anchors
-
-This is currently expressed through `compact audit` and its associated tests.
-
-## Documentation model
-
-Documentation in `compact-dev` is part of the architecture, not an afterthought.
-
-At minimum, the repository should maintain clarity around:
-
-- structure
-- governance
-- labels
-- implementation status
-- future direction
-
-Documentation should describe both the current truth and the intended direction without pretending unfinished parts already exist.
-
-## Growth model
-
-The repository should grow by extension, not by uncontrolled accumulation.
-
-Preferred growth pattern:
-
-1. define the structural need
-2. document the role
-3. add the smallest useful implementation
-4. test it
-5. integrate it into audit and documentation
-
-This keeps the project compact even as it expands.
-
-## Non-goals
-
-`compact-dev` should not become:
-
-- a general-purpose code dump
-- a miscellaneous archive without rules
-- a multi-language repository without implementation discipline
-- an over-engineered framework with thin practical value
-
-## Current status
-
-The Python core is the active reference implementation.
-
-Go and C are currently documented structural placeholders for future expansion.
-
-The project is in an early but functional stage, with working packaging, CLI execution, repository audit, badge generation, and automated tests.
-
-## Direction
-
-The immediate direction of the project is:
-
-- strengthen repository discipline
-- refine CLI behavior
-- improve documentation depth
-- modernize automation
-- expand language-specific tooling only when justified
-
-The long-term direction is to remain compact while becoming more capable.
+Avoid adding a runtime dependency solely to make templating more elaborate. The current token renderer is intentionally small and inspectable.

@@ -1,131 +1,90 @@
-# compact-dev — a compact developer toolbox and codekit
+# compact-dev — compact project scaffolding that stays auditable
 
-> Built around the UNIX philosophy: small tools, composability, and clarity.
+> Small tools, composable presets, explicit repository contracts.
 
-Maintained and curated within the ecosystem of **Digital Welfare™ Productions**.
+`compact-dev` is a dependency-light project generator and repository auditor maintained within **Digital Welfare™ Productions**. Version 0.2 separates the generator from the repository it generates: the CLI operates on user-selected targets instead of assuming its own installation directory.
 
-![last update](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Konan931/compact-dev/main/badge.json)
+## Why this exists
 
-<a id="toc"></a>
-## Table of contents
-- [Overview](#overview)
-- [Current status](#current-status)
-- [Features](#features)
-- [Profile](#profile)
-- [Structure](#structure)
-- [Labels](#labels)
-- [Quick start](#quick-start)
-- [Stability](#stability)
-- [Architecture](#architecture)
-- [Governance](#governance)
-- [Roadmap](#roadmap)
+A GitHub template should be reusable without dragging its author's identity, local state, or provider credentials into every new repository. `compact-dev` therefore treats templates as composable overlays and records the selected contract in `compact.toml`.
 
-<a id="overview"></a>
-## Overview
-
-**`compact-dev`** is a **compact developer toolbox** and **polyglot codekit** focused on:
-
-- small, auditable tools
-- repository discipline
-- metadata-driven maintenance
-- language-specific expansion without losing structural clarity
-
-The current core is implemented in **Python**, while additional language targets such as **Go** and **C** are part of the repository design and _will be expanded incrementally_.
-
-<a id="current-status"></a>
-## Current status
-
-The Python core is the current reference implementation.
-
-At this stage, the repository already provides working utilities for:
-
-- repository auditing
-- badge generation
-- initialization-oriented tooling
-
-_The broader repository structure is intentionally prepared for future extension into **additional runtimes** and **lower-level implementations**._
-
-<a id="features"></a>
-## Features
-
-- `compact init` — initialize project scaffolding
-- `compact audit` — validate repository structure and metadata
-- `compact badge` — generate `badge.json` for Shields.io endpoint badges
-
-<a id="profile"></a>
-## Profile
-
-- [profile.json](./profile.json)
-- Raw: https://raw.githubusercontent.com/Konan931/compact-dev/main/profile.json
-
-<a id="structure"></a>
-## Structure
-
-See: [structure.md](./structure.md)
-
-<a id="labels"></a>
-## Labels
-
-Repository labels are documented in more detail here:
-
-- [docs/labels.md](./docs/labels.md)
-
-Current label set:
-
-- `EXPERIMENTAL` — prototype, may break
-- `OWNED` — actively maintained and reviewed
-- `ARCHIVED` — preserved but not actively maintained
-- `NOMISCATALL` — no misc at all
-- `KLANG` — system design workspace
-- `SUSSYS` — suspect system, explicitly marked
-- `ART` — intentionally chaotic or aesthetic material
-
-<a id="quick-start"></a>
 ## Quick start
 
-###### Run through the shell wrapper:
-
 ```bash
-./bin/compact init
-./bin/compact audit
-./bin/compact badge
+python -m pip install -e '.[dev]'
+compact presets
+compact init ./demo --name "Demo CLI" --preset python-cli
+compact audit ./demo --strict
+compact doctor ./demo
 ```
 
-###### Run through Python directly:
+Compose overlays when useful:
 
 ```bash
-PYTHONPATH=src/python python -m compact audit
-PYTHONPATH=src/python python -m compact badge
+compact init ./site --name "DWP Site" --preset web-static --preset vercel
 ```
 
-Development test flow will be formalized through `pyproject.toml` and repository tests.
+Preview without writing:
 
-<a id="stability"></a>
+```bash
+compact init ./candidate --preset python-cli --dry-run
+```
 
-## Stability
+Re-running an initialized project does not require repeating its name or presets:
 
-The Python core is currently the most stable and maintained part of the repository.
+```bash
+compact init ./demo
+```
 
-_**Interfaces and structure may still evolve** while the project is being refined, especially in areas related to **packaging**, **language expansion**, and **repository governance**._
+The existing `compact.toml` contract supplies those defaults unless you explicitly override them.
 
-<a id="architecture"></a>
+## Commands
 
-## Architecture
+- `compact init [target]` — non-destructive scaffold generation; conflicts abort the entire write unless `--force` is explicit.
+- `compact audit [target]` — validate `compact.toml`, preset-required files, unresolved tokens, backup artifacts, and common secret-bearing filenames.
+- `compact doctor [target]` — inspect Python/Git and optional provider tooling without changing external services.
+- `compact status [target]` — compact machine-friendly project/audit summary.
+- `compact badge [target]` — refresh `badge.json` timestamp metadata.
+- `compact presets` — list available presets and dependencies.
 
-See: [docs/architecture.md](./docs/architecture.md)
+For `audit`, `doctor`, `status`, and `badge`, an **explicit target is exact**: the command will not silently climb into a parent project. If the target is omitted, `compact` discovers the nearest parent containing `compact.toml`, which keeps subdirectory workflows convenient without weakening explicit targeting.
 
-<a id="governance"></a>
+`audit`, `doctor`, `status`, and `presets` support structured JSON where applicable.
 
-## Governance
+## Presets
 
-See: [docs/governance.md](./docs/governance.md)
+| Preset | Role |
+| --- | --- |
+| `base` | portable repo hygiene, docs, review template, `compact.toml` |
+| `python-cli` | Python package, console entry point, pytest smoke test, CI |
+| `web-static` | framework-free HTML/CSS/JS baseline |
+| `vercel` | deployment hygiene and docs; **does not** link or deploy |
 
-<a id="roadmap"></a>
+## Design guarantees
 
-## Roadmap
+- Target paths come from the user, not from the installed package location.
+- Explicit targets never fall through to a parent repository.
+- Existing project identity and presets are retained on ordinary re-initialization.
+- Default initialization is non-destructive and aborts on conflicts before writing.
+- `--dry-run` exposes the plan; `--force` is required for managed-file replacement.
+- Template paths reject parent traversal, absolute paths, Windows drive paths, and backslash-based escape forms.
+- Project names are escaped for TOML, Python, and HTML where those formats require it.
+- Provider linking, secrets, migrations, and deployment are not hidden side effects.
+- The source repository dogfoods the same `compact.toml` contract used by generated projects.
 
-See: [docs/roadmap.md](./docs/roadmap.md)
+## Development
 
-## Contributing
+```bash
+PYTHONPATH=src/python python -m pytest
+PYTHONPATH=src/python python -m compact audit . --strict
+PYTHONPATH=src/python python -m compact init /tmp/compact-smoke --name Smoke --preset python-cli
+PYTHONPATH=src/python python -m compact audit /tmp/compact-smoke --strict
+```
 
-See: [CONTRIBUTING.md](./CONTRIBUTING.md)
+CI additionally installs and executes generated Python projects across Linux, macOS, and Windows, and verifies preset resources from a built wheel.
+
+See `docs/architecture.md`, `structure.md`, and `docs/roadmap.md` for the model and next steps.
+
+## License
+
+The repository's existing license remains unchanged in v0.2. Because this repository is also marked as a GitHub template, licensing for broader template reuse remains an explicit governance decision rather than an implicit generator default.

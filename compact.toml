@@ -1,0 +1,43 @@
+schema_version = 1
+
+[project]
+name = "compact-dev"
+slug = "compact-dev"
+package = "compact_dev"
+created = "2026-01-27T02:13:23Z"
+
+[presets]
+active = ["base"]
+
+[compact]
+generator = "compact-dev"
+generator_version = "0.2.0"
+
+[audit]
+required_dirs = [
+  "bin",
+  "docs",
+  "src/python/compact",
+  "src/python/compact/resources/presets",
+  "tests/python",
+  ".github/workflows",
+]
+required_files = [
+  "CONTRIBUTING.md",
+  "LICENSE",
+  "structure.md",
+  "pyproject.toml",
+  ".github/workflows/ci.yml",
+  "src/python/compact/cli.py",
+  "src/python/compact/config.py",
+  "src/python/compact/init.py",
+  "src/python/compact/audit.py",
+  "src/python/compact/doctor.py",
+  "src/python/compact/status.py",
+  "src/python/compact/presets.py",
+  "src/python/compact/templates.py",
+  "src/python/compact/resources/presets/base.toml",
+  "src/python/compact/resources/presets/python-cli.toml",
+  "src/python/compact/resources/presets/web-static.toml",
+  "src/python/compact/resources/presets/vercel.toml",
+]

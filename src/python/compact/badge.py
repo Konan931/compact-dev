@@ -1,44 +1,25 @@
-#!/usr/bin/env python3
-# badge.json generator for shields.io endpoint
-
 from __future__ import annotations
 
-import json
-import sys
 from datetime import datetime, timezone
+import json
+from pathlib import Path
 
-from compact.paths import repo_root
+from compact.config import load_config
+
 
 def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
-def main(args: list[str] | None = None) -> int:
-    if args is None:
-        args = sys.argv[1:]
 
-    root = repo_root()
-    profile_path = root / "profile.json"
-    badge_path = root / "badge.json"
-
-    last_update = utc_now_iso()
-    try:
-        if profile_path.exists():
-            prof = json.loads(profile_path.read_text(encoding="utf-8"))
-            if isinstance(prof.get("last_update"), str) and prof["last_update"]:
-                last_update = prof["last_update"]
-    except Exception:
-        pass
-
-    badge = {
+def write_badge(root: Path) -> Path:
+    root = root.expanduser().resolve()
+    load_config(root)
+    path = root / "badge.json"
+    payload = {
         "schemaVersion": 1,
         "label": "last update",
-        "message": last_update,
+        "message": utc_now_iso(),
         "color": "blue",
     }
-
-    badge_path.write_text(json.dumps(badge, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {badge_path}")
-    return 0
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+    path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+    return path

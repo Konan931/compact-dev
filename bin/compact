@@ -2,14 +2,11 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-VENV_PY="${ROOT_DIR}/.venv/bin/python"
-
-if [[ ! -x "${VENV_PY}" ]]; then
-  echo "ERROR: venv python not found at ${VENV_PY}"
-  echo "Run: ./bin/compact-init"
-  exit 1
+if [[ -x "${ROOT_DIR}/.venv/bin/python" ]]; then
+  PYTHON_BIN="${ROOT_DIR}/.venv/bin/python"
+else
+  PYTHON_BIN="${PYTHON:-python3}"
 fi
 
-export PYTHONPATH="${ROOT_DIR}/src/python:${PYTHONPATH:-}"
-
-exec "${VENV_PY}" -m compact "$@"
+export PYTHONPATH="${ROOT_DIR}/src/python${PYTHONPATH:+:${PYTHONPATH}}"
+exec "${PYTHON_BIN}" -m compact "$@"

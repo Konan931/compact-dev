@@ -4,40 +4,32 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "compact-dev"
-version = "0.1.0"
-description = "A compact developer toolbox and polyglot codekit."
+version = "0.2.0"
+description = "A compact, auditable project generator and repository toolbox."
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [
-  { name = "Konan" }
-]
-keywords = [
-  "cli",
-  "toolbox",
-  "developer-tools",
-  "unix",
-  "audit",
-  "polyglot"
-]
+authors = [{ name = "Konan" }]
+keywords = ["cli", "toolbox", "developer-tools", "unix", "audit", "templates", "scaffolding"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "License :: Other/Proprietary License",
   "Operating System :: OS Independent",
   "Environment :: Console",
   "Topic :: Software Development :: Build Tools",
-  "Topic :: Utilities"
+  "Topic :: Utilities",
 ]
 dependencies = []
 
 [project.optional-dependencies]
-dev = [
-  "pytest>=8.0"
-]
+dev = ["pytest>=8"]
 
 [project.scripts]
-compact = "compact.__main__:main"
+compact = "compact.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/Konan931/compact-dev"
@@ -45,14 +37,16 @@ Repository = "https://github.com/Konan931/compact-dev"
 
 [tool.setuptools]
 package-dir = {"" = "src/python"}
+include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src/python"]
 include = ["compact*"]
 
+[tool.setuptools.package-data]
+compact = ["resources/presets/*.toml"]
+
 [tool.pytest.ini_options]
 minversion = "8.0"
-testpaths = [
-  "tests/python"
-]
+testpaths = ["tests/python"]
 addopts = "-ra"
