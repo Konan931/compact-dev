@@ -1,80 +1,47 @@
 # Repository structure
 
-## Tree
-
 ```text
 compact-dev/
 ├── .github/
-│   └── workflows/
-│       └── ci.yml
-│
+│   ├── pull_request_template.md
+│   └── workflows/ci.yml
 ├── bin/
 │   ├── compact
-│   ├── compact-init
-│   ├── compact-init.bak
-│   └── compact.bootstrap.bak
-│
+│   └── compact-init
 ├── docs/
-│    ├── architecture.md
-│    ├── governance.md
-│    ├── labels.md
-│    └── roadmap.md
-│
-├──src/
-│    ├── python/
-│    │   └── compact/
-│    │       ├── __init__.py
-│    │       ├── __main__.py
-│    │       ├── audit.py
-│    │       ├── badge.py
-│    │       └── paths.py
-│    │
-│    ├── go/
-│    │   └── README.md
-│    └── c/
-│        └── README.md
-│
-├── tests/
-│   └── python/
-│       ├── test_audit.py
-│       └── test_badge.py
-│
+│   ├── architecture.md
+│   ├── decisions.md
+│   ├── governance.md
+│   ├── labels.md
+│   └── roadmap.md
+├── src/python/compact/
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── audit.py
+│   ├── badge.py
+│   ├── cli.py
+│   ├── config.py
+│   ├── doctor.py
+│   ├── init.py
+│   ├── paths.py
+│   ├── presets.py
+│   ├── status.py
+│   ├── templates.py
+│   └── resources/presets/
+│       ├── base.toml
+│       ├── python-cli.toml
+│       ├── web-static.toml
+│       └── vercel.toml
+├── tests/python/
+├── .editorconfig
+├── .gitattributes
 ├── .gitignore
-├── badge.json
-├── profile.json
+├── compact.toml
+├── CONTRIBUTING.md
+├── LICENSE
 ├── pyproject.toml
 ├── README.md
-└── structure.md
+└── SECURITY.md
 ```
 
-## Notes
-
-* .github/workflows/ contains CI-related workflow definitions.
-
-* bin/ contains thin wrapper scripts and bootstrap-oriented helpers.
-
-* docs/ contains governance and repository vocabulary documentation.
-
-* project/ currently exists in the repository root and should either be documented further or removed in a later cleanup pass.
-
-* src/python/compact/ contains the current primary reference implementation.
-
-* src/go/ and src/c/ are reserved for future language-specific extensions.
-
-* tests/python/ contains automated tests for the Python core.
-
-* profile.json and badge.json provide repository metadata and badge integration.
-
-* pyproject.toml is the primary Python project definition for packaging, editable installs, and development dependencies.
-
-* `docs/architecture.md` defines the structural model of the repository.
-
-* `docs/roadmap.md` describes the intended direction of the project.
-
-## Status
-
-* The Python core is currently the primary maintained implementation.
-
-* Go and C are currently structural placeholders for future expansion and are not yet feature-complete.
-
-* Some repository files and directories still reflect transitional state and may be cleaned up in later revisions.
+Go and C remain possible future targets, but placeholder directories are no longer part of the generator contract. Language support should enter as executable, tested presets rather than empty symmetry.
