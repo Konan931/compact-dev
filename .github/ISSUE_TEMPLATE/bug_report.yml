@@ -1,0 +1,105 @@
+name: Bug report
+description: Report a reproducible defect in compact-dev or a generated project.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve compact-dev. Do not include credentials, tokens, private data, or undisclosed security vulnerabilities. Use the Security reports link in the issue chooser for security-sensitive reports.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      description: Which part of compact-dev is affected?
+      options:
+        - compact init
+        - compact audit
+        - compact doctor
+        - compact status
+        - compact badge
+        - compact presets
+        - Generated project
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: compact_version
+    attributes:
+      label: compact-dev version
+      placeholder: "0.2.0"
+    validations:
+      required: true
+
+  - type: input
+    id: python_version
+    attributes:
+      label: Python version
+      placeholder: "3.13.15"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: operating_system
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: presets
+    attributes:
+      label: Active presets
+      description: List the relevant presets from compact.toml, if applicable.
+      placeholder: "base, python-cli"
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest deterministic sequence that reproduces the problem.
+      placeholder: |
+        1. Run ...
+        2. Open ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized output or logs
+      description: Remove credentials, tokens, private paths, personal data, and unrelated repository content.
+      render: shell
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Submission checks
+      options:
+        - label: I removed credentials, tokens, private data, and unrelated sensitive content.
+          required: true
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: This is not an undisclosed security vulnerability.
+          required: true

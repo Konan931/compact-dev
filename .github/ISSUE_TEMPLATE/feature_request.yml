@@ -1,0 +1,77 @@
+name: Feature request
+description: Propose a focused improvement to compact-dev.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        compact-dev favors small, explicit, auditable changes. Describe the problem first, then the smallest useful capability that addresses it.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or limitation
+      description: What concrete workflow is currently difficult, unsafe, repetitive, or impossible?
+    validations:
+      required: true
+
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Desired behavior
+      description: Describe observable behavior rather than only an implementation preference.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Likely scope
+      options:
+        - Core CLI
+        - Audit or repository checks
+        - Preset system
+        - Generated project behavior
+        - CI or packaging
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: portability
+    attributes:
+      label: Portability expectation
+      options:
+        - Platform-independent
+        - Linux, macOS, and Windows
+        - POSIX-focused
+        - Platform-specific by design
+        - Unsure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: side_effects
+    attributes:
+      label: External side effects
+      description: Would the feature need network access, authentication, provisioning, deployment, or provider mutation?
+      options:
+        - None
+        - Optional and explicit
+        - Required
+        - Unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Note workarounds, existing commands, or a preset-only solution if relevant.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add examples, constraints, or compatibility concerns that materially affect the proposal.
