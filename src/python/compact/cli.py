@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-from pathlib import Path
 import sys
 
 from compact import __version__
@@ -10,7 +9,7 @@ from compact.audit import format_audit, run_audit
 from compact.badge import write_badge
 from compact.doctor import format_doctor, run_doctor
 from compact.init import initialize_project
-from compact.paths import find_project_root, resolve_root
+from compact.paths import resolve_project_root, resolve_root
 from compact.presets import PresetError, available_presets, load_preset
 from compact.status import format_status, status_payload
 
@@ -28,20 +27,20 @@ def build_parser() -> argparse.ArgumentParser:
     init_parser.add_argument("--force", action="store_true", help="Overwrite conflicting managed files")
 
     audit_parser = sub.add_parser("audit", help="Validate repository structure and template hygiene")
-    audit_parser.add_argument("target", nargs="?", default=".")
+    audit_parser.add_argument("target", nargs="?")
     audit_parser.add_argument("--strict", action="store_true", help="Treat warnings as failure")
     audit_parser.add_argument("--json", action="store_true", dest="json_output")
 
     doctor_parser = sub.add_parser("doctor", help="Inspect local tooling and optional integration readiness")
-    doctor_parser.add_argument("target", nargs="?", default=".")
+    doctor_parser.add_argument("target", nargs="?")
     doctor_parser.add_argument("--json", action="store_true", dest="json_output")
 
     status_parser = sub.add_parser("status", help="Emit a compact repository status summary")
-    status_parser.add_argument("target", nargs="?", default=".")
+    status_parser.add_argument("target", nargs="?")
     status_parser.add_argument("--json", action="store_true", dest="json_output")
 
     badge_parser = sub.add_parser("badge", help="Refresh badge.json timestamp metadata")
-    badge_parser.add_argument("target", nargs="?", default=".")
+    badge_parser.add_argument("target", nargs="?")
 
     presets_parser = sub.add_parser("presets", help="List available template presets")
     presets_parser.add_argument("--json", action="store_true", dest="json_output")
@@ -81,25 +80,25 @@ def main(argv: list[str] | None = None) -> int:
             return _print_init_result(result)
 
         if args.command == "audit":
-            root = find_project_root(args.target)
+            root = resolve_project_root(args.target)
             result = run_audit(root, strict=args.strict)
             print(format_audit(result, json_output=args.json_output))
             return 0 if result.ok else 1
 
         if args.command == "doctor":
-            root = find_project_root(args.target)
+            root = resolve_project_root(args.target)
             checks = run_doctor(root)
             print(format_doctor(checks, json_output=args.json_output))
             return 1 if any(check.status == "error" for check in checks) else 0
 
         if args.command == "status":
-            root = find_project_root(args.target)
+            root = resolve_project_root(args.target)
             payload = status_payload(root)
             print(format_status(payload, json_output=args.json_output))
             return 0 if payload["audit_ok"] else 1
 
         if args.command == "badge":
-            root = find_project_root(args.target)
+            root = resolve_project_root(args.target)
             print(f"Wrote {write_badge(root)}")
             return 0
 

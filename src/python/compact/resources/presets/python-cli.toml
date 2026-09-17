@@ -12,7 +12,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "{{ project_slug }}"
 version = "0.1.0"
-description = "{{ project_name }}"
+description = {{ project_name_toml }}
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []
@@ -35,7 +35,7 @@ testpaths = ["tests"]
 
 [[files]]
 target = "src/{{ package_name }}/__init__.py"
-content = '''"""{{ project_name }} package."""
+content = '''"""Generated CLI package."""
 
 __version__ = "0.1.0"
 '''
@@ -56,8 +56,11 @@ content = '''from __future__ import annotations
 import argparse
 
 
+PROJECT_NAME = {{ project_name_python }}
+
+
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="{{ project_slug }}")
+    parser = argparse.ArgumentParser(prog="{{ project_slug }}", description=PROJECT_NAME)
     parser.add_argument("--version", action="store_true")
     return parser
 

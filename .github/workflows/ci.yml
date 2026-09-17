@@ -38,17 +38,44 @@ jobs:
         with:
           python-version: "3.13"
       - run: python -m pip install -e '.[dev]'
-      - name: Generate Python CLI twice and audit
+      - name: Generate, install, test, and re-audit Python CLI
         shell: bash
         run: |
           target="${RUNNER_TEMP}/compact-python"
           compact init "$target" --name "Smoke CLI" --preset python-cli
           compact audit "$target" --strict
-          compact init "$target" --name "Smoke CLI" --preset python-cli
+          python -m pip install -e "${target}[dev]"
+          (
+            cd "$target"
+            python -m pytest
+            python -m smoke_cli --version
+          )
+          compact init "$target"
           compact audit "$target" --strict
       - name: Generate static + Vercel overlay and audit
         shell: bash
         run: |
           target="${RUNNER_TEMP}/compact-web"
-          compact init "$target" --name "Smoke Web" --preset web-static --preset vercel
+          compact init "$target" --name 'Smoke "Web" <Site>' --preset web-static --preset vercel
           compact audit "$target" --strict
+
+  package-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m pip install build
+      - run: python -m build --wheel
+      - name: Verify installed wheel contains functional presets
+        shell: bash
+        run: |
+          wheel="$(ls dist/*.whl)"
+          venv="${RUNNER_TEMP}/compact-wheel-venv"
+          target="${RUNNER_TEMP}/compact-wheel-project"
+          python -m venv "$venv"
+          "$venv/bin/python" -m pip install "$wheel"
+          "$venv/bin/compact" presets
+          "$venv/bin/compact" init "$target" --name "Wheel Smoke" --preset python-cli
+          "$venv/bin/compact" audit "$target" --strict

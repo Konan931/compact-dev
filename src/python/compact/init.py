@@ -1,11 +1,11 @@
 from __future__ import annotations
 
+from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
-from collections import OrderedDict
 
 from compact.config import ConfigError, load_config
-from compact.presets import PresetError, resolve_presets
+from compact.presets import resolve_presets
 from compact.templates import build_context, render_path, render_template
 
 
@@ -39,17 +39,27 @@ def initialize_project(
     force: bool = False,
 ) -> InitResult:
     target = target.expanduser().resolve()
-    presets = resolve_presets(preset_names)
-    active = tuple(preset.name for preset in presets)
-    name = (project_name or target.name or "project").strip()
-    if not name:
-        raise ValueError("Project name must not be empty")
+
     existing_config = None
     if (target / "compact.toml").is_file():
         try:
             existing_config = load_config(target)
         except ConfigError:
             existing_config = None
+
+    if project_name is None and existing_config is not None:
+        name = existing_config.name
+    else:
+        name = (project_name or target.name or "project").strip()
+    if not name:
+        raise ValueError("Project name must not be empty")
+
+    if preset_names is None and existing_config is not None:
+        requested_presets: list[str] | tuple[str, ...] | None = existing_config.presets
+    else:
+        requested_presets = preset_names
+    presets = resolve_presets(requested_presets)
+    active = tuple(preset.name for preset in presets)
 
     if existing_config is not None and existing_config.name == name:
         context = build_context(

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import html
 import json
+import keyword
+from pathlib import PurePosixPath, PureWindowsPath
 import re
 
 from compact import __version__
@@ -18,6 +21,8 @@ def package_name_from_slug(slug: str) -> str:
     package = re.sub(r"[^a-z0-9_]+", "_", slug.replace("-", "_"))
     if not package or package[0].isdigit():
         package = f"project_{package}" if package else "project"
+    if keyword.iskeyword(package):
+        package = f"{package}_pkg"
     return package
 
 
@@ -36,6 +41,8 @@ def build_context(
     return {
         "project_name": project_name,
         "project_name_toml": json.dumps(project_name, ensure_ascii=False),
+        "project_name_python": repr(project_name),
+        "project_name_html": html.escape(project_name, quote=True),
         "project_slug": project_slug,
         "package_name": package,
         "generated_at": timestamp,
@@ -62,6 +69,16 @@ def render_template(text: str, context: dict[str, str]) -> str:
 
 def render_path(path: str, context: dict[str, str]) -> str:
     rendered = render_template(path, context)
-    if rendered.startswith("/") or ".." in rendered.split("/"):
+    posix = PurePosixPath(rendered)
+    windows = PureWindowsPath(rendered)
+    if (
+        not rendered
+        or rendered in {".", ".."}
+        or "\x00" in rendered
+        or "\\" in rendered
+        or posix.is_absolute()
+        or bool(windows.drive)
+        or any(part == ".." for part in posix.parts)
+    ):
         raise ValueError(f"Unsafe template path: {rendered}")
     return rendered

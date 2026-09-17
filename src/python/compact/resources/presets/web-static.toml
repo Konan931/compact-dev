@@ -10,14 +10,14 @@ content = '''<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="{{ project_name }}">
-  <title>{{ project_name }}</title>
+  <meta name="description" content="{{ project_name_html }}">
+  <title>{{ project_name_html }}</title>
   <link rel="stylesheet" href="./src/styles.css">
 </head>
 <body>
   <main class="shell">
     <p class="eyebrow">compact-dev / web-static</p>
-    <h1>{{ project_name }}</h1>
+    <h1>{{ project_name_html }}</h1>
     <p>A dependency-free starting point. Replace this surface without changing the repository contract.</p>
   </main>
   <script type="module" src="./src/app.js"></script>
