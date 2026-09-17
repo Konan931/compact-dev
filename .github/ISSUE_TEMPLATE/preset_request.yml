@@ -1,0 +1,80 @@
+name: Preset request
+description: Propose a new composable compact-dev preset or preset capability.
+title: "[Preset]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Presets should stay inspectable, composable, testable, and explicit about external side effects. A language or framework should be added because it serves a concrete workflow, not only for symmetry.
+
+  - type: input
+    id: preset_name
+    attributes:
+      label: Proposed preset name
+      placeholder: "typescript-lib"
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Primary use case
+      description: What project should this preset create or extend, and for whom?
+    validations:
+      required: true
+
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Generated artifacts
+      description: List the files, directories, configuration, or workflows the preset should own.
+      placeholder: |
+        - package.json
+        - src/index.ts
+        - tests/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: composition
+    attributes:
+      label: Dependencies and composition
+      description: Which existing presets should it depend on or compose with? Note file ownership conflicts if any.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: provider_effects
+    attributes:
+      label: Provider or external side effects
+      options:
+        - None
+        - Optional documentation or configuration only
+        - Optional explicit provider interaction
+        - Required provider interaction
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Intended platforms
+      options:
+        - label: Linux
+        - label: macOS
+        - label: Windows
+        - label: Platform-specific by design
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Runtime and development dependencies
+      description: Name dependencies and explain why the standard library or existing tooling is insufficient.
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Audit and test expectations
+      description: What should generated-project smoke tests and compact audit verify?
+    validations:
+      required: true
