@@ -1,0 +1,44 @@
+[preset]
+name = "vercel"
+description = "Provider-aware deployment hygiene without linking or deploying a live project."
+depends = ["base"]
+
+[[files]]
+target = "vercel.json"
+content = '''{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true
+}
+'''
+
+[[files]]
+target = ".vercelignore"
+content = '''.venv
+__pycache__
+.pytest_cache
+coverage
+*.log
+'''
+
+[[files]]
+target = ".env.example"
+content = '''# Declare variable names only. Never place production secrets in this file.
+'''
+
+[[files]]
+target = "docs/vercel.md"
+content = '''# Vercel profile
+
+This preset prepares repository hygiene only. It does **not** create, link, or deploy a Vercel project.
+
+Recommended first live setup:
+
+```bash
+vercel whoami
+vercel link
+vercel env pull .env.local --yes
+vercel deploy
+```
+
+Keep `.vercel/` and local environment files out of Git. Prefer preview deployments for validation before production promotion.
+'''

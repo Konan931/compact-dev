@@ -1,0 +1,56 @@
+[preset]
+name = "web-static"
+description = "Framework-free static web baseline with accessible HTML, CSS, and JavaScript."
+depends = ["base"]
+
+[[files]]
+target = "index.html"
+content = '''<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ project_name }}">
+  <title>{{ project_name }}</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <p class="eyebrow">compact-dev / web-static</p>
+    <h1>{{ project_name }}</h1>
+    <p>A dependency-free starting point. Replace this surface without changing the repository contract.</p>
+  </main>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
+'''
+
+[[files]]
+target = "src/styles.css"
+content = ''':root {
+  color-scheme: dark light;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; }
+.shell { width: min(72rem, calc(100% - 2rem)); margin: 0 auto; padding: 12vh 0; }
+.eyebrow { font-family: ui-monospace, monospace; opacity: 0.7; }
+h1 { font-size: clamp(2.5rem, 8vw, 7rem); line-height: 0.95; margin: 0.2em 0; }
+'''
+
+[[files]]
+target = "src/app.js"
+content = '''const root = document.documentElement;
+root.dataset.project = "{{ project_slug }}";
+'''
+
+[[files]]
+target = "docs/web-static.md"
+content = '''# Static web profile
+
+This preset intentionally avoids a framework and build step. `index.html` references `src/styles.css` and `src/app.js` directly.
+
+Introduce a framework only when routing, component state, server rendering, or build-time transformation justifies it.
+'''

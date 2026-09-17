@@ -1,0 +1,113 @@
+[preset]
+name = "python-cli"
+description = "Minimal Python CLI package with tests and GitHub Actions."
+depends = ["base"]
+
+[[files]]
+target = "pyproject.toml"
+content = '''[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{ project_slug }}"
+version = "0.1.0"
+description = "{{ project_name }}"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+"{{ project_slug }}" = "{{ package_name }}.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+'''
+
+[[files]]
+target = "src/{{ package_name }}/__init__.py"
+content = '''"""{{ project_name }} package."""
+
+__version__ = "0.1.0"
+'''
+
+[[files]]
+target = "src/{{ package_name }}/__main__.py"
+content = '''from {{ package_name }}.cli import main
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+'''
+
+[[files]]
+target = "src/{{ package_name }}/cli.py"
+content = '''from __future__ import annotations
+
+import argparse
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="{{ project_slug }}")
+    parser.add_argument("--version", action="store_true")
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    if args.version:
+        print("{{ project_slug }} 0.1.0")
+    return 0
+'''
+
+[[files]]
+target = "tests/test_smoke.py"
+content = '''from {{ package_name }}.cli import main
+
+
+def test_cli_smoke() -> None:
+    assert main([]) == 0
+'''
+
+[[files]]
+target = ".github/workflows/ci.yml"
+content = '''name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: python -m pip install -e '.[dev]'
+      - run: python -m pytest
+'''
+
+[[files]]
+target = "docs/python-cli.md"
+content = '''# Python CLI profile
+
+The package lives under `src/{{ package_name }}/` and exposes the `{{ project_slug }}` console command.
+
+Keep runtime dependencies explicit and small. Add a dependency only when the standard library does not provide the required behavior cleanly.
+'''

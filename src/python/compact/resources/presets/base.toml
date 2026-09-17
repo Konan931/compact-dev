@@ -1,0 +1,146 @@
+[preset]
+name = "base"
+description = "Portable repository hygiene, metadata, docs, and review scaffolding."
+depends = []
+
+[[files]]
+target = "README.md"
+content = '''# {{ project_name }}
+
+Generated with **compact-dev {{ compact_version }}** using: `{{ presets_display }}`.
+
+## Start here
+
+1. Review `compact.toml` and `docs/architecture.md`.
+2. Run `compact audit --strict` after structural changes.
+3. Run `compact doctor` to inspect local integration readiness.
+4. Choose a license deliberately before public distribution.
+
+The generated baseline is dependency-light, non-destructive, and intended to be extended rather than replaced wholesale.
+'''
+
+[[files]]
+target = "compact.toml"
+content = '''schema_version = 1
+
+[project]
+name = {{ project_name_toml }}
+slug = "{{ project_slug }}"
+package = "{{ package_name }}"
+created = "{{ generated_at }}"
+
+[presets]
+active = {{ presets_toml }}
+
+[compact]
+generator = "compact-dev"
+generator_version = "{{ compact_version }}"
+'''
+
+[[files]]
+target = ".gitignore"
+content = '''.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+build/
+.vercel/
+coverage/
+'''
+
+[[files]]
+target = ".editorconfig"
+content = '''root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+
+[*.py]
+indent_size = 4
+
+[Makefile]
+indent_style = tab
+'''
+
+[[files]]
+target = ".gitattributes"
+content = '''* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.pdf binary
+'''
+
+[[files]]
+target = "SECURITY.md"
+content = '''# Security
+
+- Do not commit credentials, private keys, `.env`, or provider tokens.
+- Keep `.env.example` limited to variable names and safe sample values.
+- Treat generated configuration as a baseline; review permissions before deployment.
+- Report security-sensitive defects through a private channel appropriate to the project owner.
+'''
+
+[[files]]
+target = "docs/architecture.md"
+content = '''# Architecture
+
+## Project
+
+- Name: `{{ project_name }}`
+- Slug: `{{ project_slug }}`
+- Active presets: `{{ presets_display }}`
+
+## Design constraints
+
+- Prefer small, composable units.
+- Keep environment-specific state outside version control.
+- Make generated defaults easy to audit and replace.
+- Record material architectural changes in `docs/decisions.md`.
+'''
+
+[[files]]
+target = "docs/decisions.md"
+content = '''# Decision log
+
+Use this file for short architecture decision records.
+
+## {{ generated_at }} — Initial scaffold
+
+- Generated from compact-dev.
+- Active presets: `{{ presets_display }}`.
+- No deployment target is assumed unless a deployment preset is active.
+'''
+
+[[files]]
+target = ".github/pull_request_template.md"
+content = '''## What changed?
+
+## Why?
+
+## Validation
+
+- [ ] Tests or relevant checks pass
+- [ ] `compact audit --strict` passes
+- [ ] Documentation reflects structural changes
+- [ ] No secrets or generated local state were committed
+'''
