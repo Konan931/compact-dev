@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "demo-cli"
+version = "0.1.0"
+description = "Generated example project from compact-dev"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Example User" }]
+dependencies = []
+
+[project.scripts]
+demo = "demo_cli.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["demo_cli*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

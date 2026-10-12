@@ -1,0 +1,14 @@
+schema_version = 1
+
+[project]
+name = "Demo CLI"
+slug = "demo-cli"
+package = "demo_cli"
+created = "2026-10-12T00:00:00Z"
+
+[presets]
+active = ["base", "python-cli"]
+
+[compact]
+generator = "compact-dev"
+generator_version = "0.2.0"
