@@ -2,11 +2,36 @@
 
 > Small tools, composable presets, explicit repository contracts.
 
-`compact-dev` is a dependency-light project generator and repository auditor maintained within **Digital Welfare™ Productions**. Version 0.2 separates the generator from the repository it generates: the CLI operates on user-selected targets instead of assuming its own installation directory.
+`compact-dev` is a dependency-light project generator and repository auditor maintained within Digital Welfare™ Productions. Version 0.2 separates the generator from the repository it generates so a template remains small, portable, and explicit about what it does.
 
 ## Why this exists
 
-A GitHub template should be reusable without dragging its author's identity, local state, or provider credentials into every new repository. `compact-dev` therefore treats templates as composable overlays and records the selected contract in `compact.toml`.
+A GitHub template should be reusable without dragging its author's identity, local state, or provider credentials into every new repository. `compact-dev` therefore treats templates as composable overlays backed by an auditable repository contract rather than a hidden mix of local assumptions.
+
+## Quickest path from zero to a working project
+
+If you want the shortest route to a usable repository, do this:
+
+```bash
+python -m pip install -e '.[dev]'
+compact init ./demo --name "Demo CLI" --preset python-cli
+compact audit ./demo --strict
+compact doctor ./demo
+```
+
+That gives you a generated Python CLI project, a repository contract in `compact.toml`, and immediate validation checks for hygiene and setup.
+
+If you want to preview without writing files:
+
+```bash
+compact init ./candidate --preset python-cli --dry-run
+```
+
+If you want to generate a static web site baseline instead:
+
+```bash
+compact init ./site --name "DWP Site" --preset web-static --preset vercel
+```
 
 ## Quick start
 
@@ -38,6 +63,29 @@ compact init ./demo
 
 The existing `compact.toml` contract supplies those defaults unless you explicitly override them.
 
+## What a generated repo looks like
+
+A typical generated Python project looks like this:
+
+```text
+demo/
+├── README.md
+├── pyproject.toml
+├── compact.toml
+├── src/
+│   └── demo/
+│       ├── __init__.py
+│       └── cli.py
+├── tests/
+│   └── test_smoke.py
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+└── docs/
+```
+
+This is intentionally compact: a single generated package layout, a clear contract file, and audit/doctor checks that are obvious to maintain.
+
 ## Commands
 
 - `compact init [target]` — non-destructive scaffold generation; conflicts abort the entire write unless `--force` is explicit.
@@ -47,7 +95,7 @@ The existing `compact.toml` contract supplies those defaults unless you explicit
 - `compact badge [target]` — refresh `badge.json` timestamp metadata.
 - `compact presets` — list available presets and dependencies.
 
-For `audit`, `doctor`, `status`, and `badge`, an **explicit target is exact**: the command will not silently climb into a parent project. If the target is omitted, `compact` discovers the nearest parent containing `compact.toml`, which keeps subdirectory workflows convenient without weakening explicit targeting.
+For `audit`, `doctor`, `status`, and `badge`, an explicit target is exact: the command will not silently climb into a parent project. If the target is omitted, `compact` discovers the nearest project root by walking upward from the current working directory.
 
 `audit`, `doctor`, `status`, and `presets` support structured JSON where applicable.
 
@@ -58,7 +106,7 @@ For `audit`, `doctor`, `status`, and `badge`, an **explicit target is exact**: t
 | `base` | portable repo hygiene, docs, review template, `compact.toml` |
 | `python-cli` | Python package, console entry point, pytest smoke test, CI |
 | `web-static` | framework-free HTML/CSS/JS baseline |
-| `vercel` | deployment hygiene and docs; **does not** link or deploy |
+| `vercel` | deployment hygiene and docs; does not link or deploy |
 
 ## Design guarantees
 
@@ -87,4 +135,4 @@ See `docs/architecture.md`, `structure.md`, and `docs/roadmap.md` for the model 
 
 ## License
 
-The repository's existing license remains unchanged in v0.2. Because this repository is also marked as a GitHub template, licensing for broader template reuse remains an explicit governance decision rather than an implicit generator default.
+The repository's existing license remains unchanged in v0.2. Because this repository is also marked as a GitHub template, licensing for broader template reuse remains an explicit governance decision. The code and generated output remain clear about what is template-managed and what is project-local.
